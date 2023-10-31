@@ -1,0 +1,23 @@
+name: Delete Merged Branches
+
+on:
+  push:
+    branches:
+      - main # Change this to your default branch name
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  delete-branch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check Out Repository
+        uses: actions/checkout@v2
+
+      - name: Delete Merged Branches
+        run: |
+          git fetch --prune
+          git branch --merged main | grep -v "main" | xargs -I % git push origin --delete %
+        if: success()
